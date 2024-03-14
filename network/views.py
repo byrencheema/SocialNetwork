@@ -14,6 +14,12 @@ def index(request):
         "posts": postData
     })
 
+def profile(request):
+    userData = User.objects.get(username=request.user)
+    return render(request, "network/profile.html", { 
+        userData: userData
+    })
+
 def post(request):
     if request.method == "POST":
         content = request.POST["content"]
