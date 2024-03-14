@@ -14,10 +14,13 @@ def index(request):
         "posts": postData
     })
 
-def profile(request):
-    userData = User.objects.get(username=request.user)
+def profile(request, username):
+    userData = User.objects.get(username=username)
+    userPosts = Post.objects.filter(user=userData)
+
     return render(request, "network/profile.html", { 
-        userData: userData
+        'userData': userData,
+        'userPosts': userPosts
     })
 
 def post(request):
