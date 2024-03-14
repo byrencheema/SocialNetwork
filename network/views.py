@@ -14,6 +14,19 @@ def index(request):
         "posts": postData
     })
 
+def toggle_follow(request, username):
+    user = request.user
+    followedUser = User.objects.get(username=username)
+
+    if user in followedUser.followers.all():
+        followedUser.followers.remove(user)
+        user.following.remove(followedUser)
+    else:
+        followedUser.followers.add(user)
+        user.following.add(followedUser)
+
+    return HttpResponseRedirect(reverse("profile", args=(username,)))
+
 def profile(request, username):
     userData = User.objects.get(username=username)
     userPosts = Post.objects.filter(user=userData)
