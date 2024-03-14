@@ -14,6 +14,15 @@ def index(request):
         "posts": postData
     })
 
+def post(request):
+    if request.method == "POST":
+        content = request.POST["content"]
+        user = request.user
+        post = Post(user=user, content=content)
+        post.save()
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        return render(request, "network/index.html")
 
 def login_view(request):
     if request.method == "POST":

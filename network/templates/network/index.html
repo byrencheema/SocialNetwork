@@ -2,6 +2,22 @@
 
 {% block body %}
 <div class="container mt-4">
+    {% if user.is_authenticated %}
+        <form action="{% url 'create_post' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea class="form-control" name="content" rows="3" placeholder="What's on your mind?"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post</button>
+        </form> 
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <a href="{% url 'login' %}" class="alert-link">Log in</a> to post.
+        </div>
+    {% endif %}
+</div>
+
+<div class="container mt-4">
     {% for post in posts %}
     <div class="card mb-4">
         <div class="card-header">
@@ -18,7 +34,7 @@
                 </button>
             </span>
         </div>
-    </div>
+</div>
     {% empty %}
     <p>No posts to display.</p>
     {% endfor %}
