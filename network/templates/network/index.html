@@ -6,7 +6,7 @@
         <form action="{% url 'create_post' %}" method="post">
             {% csrf_token %}
             <div class="form-group">
-                <textarea class="form-control" name="content" rows="3" placeholder="What's on your mind?"></textarea>
+                <textarea class="form-control form-control-lg" name="content" rows="3" placeholder="What's on your mind?"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Post</button>
         </form> 
@@ -18,7 +18,7 @@
 </div>
 
 <div class="container mt-4">
-    {% for post in posts %}
+    {% for post in page_obj %}
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">{{ post.user.username }}</h5>
@@ -27,15 +27,41 @@
             <p class="card-text">{{ post.content }}</p>
         </div>
         <div class="card-footer text-muted">
-            <span>Posted on {{ post.timestamp|date:"M d, Y H:i" }}</span>
+            <span>Posted {{ post.timestamp }}</span>
+            {% if user.is_authenticated %}
             <span class="float-right">
                 <button type="button" class="btn btn-outline-primary">
                     Likes <span class="badge badge-light">{{ post.likes.count }}</span>
                 </button>
             </span>
+            {% endif %}
         </div>
-</div>
+    </div>
     {% empty %}
     <p>No posts to display.</p>
     {% endfor %}
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item mx-1"><a href="?page=1" class="page-link" aria-label="First page">&laquo; first</a></li>
+                <li class="page-item mx-1"><a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="Previous page">previous</a></li>
+            {% endif %}
+            
+            <!-- Current Page Indicator -->
+            <li class="page-item mx-1 disabled">
+                <span class="page-link current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item mx-1"><a href="?page={{ page_obj.next_page_number }}" class="page-link" aria-label="Next page">next</a></li>
+                <li class="page-item mx-1"><a href="?page={{ page_obj.paginator.num_pages }}" class="page-link" aria-label="Last page">last &raquo;</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    
+</div>
 {% endblock %}

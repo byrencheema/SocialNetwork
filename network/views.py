@@ -3,6 +3,8 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.paginator import Paginator
+
 
 from .models import User, Post
 
@@ -10,8 +12,15 @@ from .models import User, Post
 def index(request):
     postData = Post.objects.all()
 
+    # Paginate the posts
+    paginator = Paginator(postData, 5)
+    
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "network/index.html", {
-        "posts": postData
+        "posts": postData,
+        "page_obj": page_obj
     })
 
 def toggle_follow(request, username):
@@ -43,7 +52,7 @@ def profile(request, username):
     return render(request, "network/profile.html", { 
         'userData': userData,
         'userPosts': userPosts
-    })
+        })
 
 def post(request):
     if request.method == "POST":
