@@ -27,6 +27,15 @@ def toggle_follow(request, username):
 
     return HttpResponseRedirect(reverse("profile", args=(username,)))
 
+def following(request):
+    user = request.user
+    following = user.following.all()
+    followingPosts = Post.objects.filter(user__in=following)
+
+    return render(request, "network/following.html", {
+        "followingPosts": followingPosts
+    })
+
 def profile(request, username):
     userData = User.objects.get(username=username)
     userPosts = Post.objects.filter(user=userData)
