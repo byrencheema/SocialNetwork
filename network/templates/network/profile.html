@@ -1,0 +1,61 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">{{ userData.username }}</h2>
+                    <div class="row mt-5">
+                        <div class="col-sm-6">
+                            <h5 class="card-subtitle mb-2 text-muted">Following</h5>
+                            <p class="card-text">{{ userData.following.count }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <h5 class="card-subtitle mb-2 text-muted">Followers</h5>
+                            <p class="card-text">{{ userData.followers.count }}</p>
+                        </div>
+                        {% if user.is_authenticated and user.username != userData.username %}
+                        <div class="col-sm-12 mt-4">
+                            <form action="{% url 'follow' userData.username %}"method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">
+                                    {% if user in userData.followers.all %}
+                                    Unfollow
+                                    {% else %}
+                                    Follow
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<h2 class="mt-4">Posts</h2>
+    <div class="container mt-4">
+        {% for post in userPosts %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">{{ post.user.username }}</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ post.content }}</p>
+            </div>
+            <div class="card-footer text-muted">
+                <span>Posted on {{ post.timestamp|date:"M d, Y H:i" }}</span>
+                <span class="float-right">
+                    <button type="button" class="btn btn-outline-primary">
+                        Likes <span class="badge badge-light">{{ post.likes.count }}</span>
+                    </button>
+                </span>
+            </div>
+    </div>
+        {% empty %}
+        <p>No posts to display.</p>
+        {% endfor %}
+</div>
+{% endblock %}

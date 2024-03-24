@@ -64,6 +64,18 @@ def post(request):
     else:
         return render(request, "network/index.html")
 
+def edit_post(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    if request.method == "POST":
+        post.content = request.POST["content"]
+        post.save()
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        return render(request, "network/edit_post.html", {
+            "post": post
+        })
+
+
 def login_view(request):
     if request.method == "POST":
 
